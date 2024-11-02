@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite parallel="none" name="OrangeHRM - Web Automation UI">
+
+    <listeners>
+        <listener class-name="commons.MethodListener"/>
+        <listener class-name="reportConfig.ExtentTestListener"/>
+    </listeners>
+
+    <parameter name="url" value="https://opensource-demo.orangehrmlive.com/"></parameter>
+
+    <test name="Run on Chrome Extension">
+        <parameter name="browser" value="chrome"></parameter>
+        <classes>
+            <class name="com.orangehrm.pim.PIM_01_Employee_BrowserConfig_Headless_And_Extension"></class>
+        </classes>
+    </test>
+
+    <test name="Run on Firefox Extension">
+        <parameter name="browser" value="firefox"></parameter>
+        <classes>
+            <class name="com.orangehrm.pim.PIM_01_Employee_BrowserConfig_Headless_And_Extension"></class>
+        </classes>
+    </test>
+
+    <test name="Run on Edge Extension">
+        <parameter name="browser" value="edge"></parameter>
+        <classes>
+            <class name="com.orangehrm.pim.PIM_01_Employee_BrowserConfig_Headless_And_Extension"></class>
+        </classes>
+    </test>
+
+</suite>

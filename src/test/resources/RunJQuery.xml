@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="DataTable - DataGrid">
+
+    <parameter name="url" value="https://blueimp.github.io/jQuery-File-Upload/"></parameter>
+
+    <test name="Run on Firefox">
+        <parameter name="browser" value="firefox"></parameter>
+        <classes>
+            <class name="com.jquery.upload.Level_14_Upload_File"></class>
+        </classes>
+    </test>
+
+    <test name="Run on Chrome">
+        <parameter name="browser" value="chrome"></parameter>
+        <classes>
+            <class name="com.jquery.upload.Level_14_Upload_File"></class>
+        </classes>
+    </test>
+
+    <test name="Run on Edge">
+        <parameter name="browser" value="edge"></parameter>
+        <classes>
+            <class name="com.jquery.upload.Level_14_Upload_File"></class>
+        </classes>
+    </test>
+
+</suite>

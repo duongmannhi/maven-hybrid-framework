@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="NopCommerce">
+
+    <listeners>
+        <listener class-name="commons.MethodListener"/>
+    </listeners>
+
+    <test name="Run on Firefox" preserve-order="true">
+        <parameter name="browser" value="firefox"></parameter>
+        <classes>
+            <class name="com.nopcommerce.cookie.Common_Register"></class>
+            <class name="com.nopcommerce.cookie.Order"></class>
+            <class name="com.nopcommerce.cookie.Product"></class>
+            <class name="com.nopcommerce.cookie.Payment"></class>
+        </classes>
+    </test>
+    
+
+
+</suite>
