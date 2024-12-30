@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="OrangeHRM - Web Automation UI">
+
+    <listeners>
+        <listener class-name="commons.MethodListener"/>
+        <listener class-name="reportConfig.ExtentTestListener"/>
+    </listeners>
+
+    <parameter name="server" value="live"></parameter>
+
+    <test name="Run on FIREFOX - Windows">
+        <parameter name="os" value="Windows"></parameter>
+        <parameter name="browser" value="firefox"></parameter>
+        <parameter name="browser_version" value="latest"></parameter>
+        <classes>
+            <class name="com.nopcommerce.account.Level_36_AWS"></class>
+        </classes>
+    </test>
+
+    <test name="Run on CHROME - Windows">
+        <parameter name="os" value="Windows"></parameter>
+        <parameter name="browser" value="chrome"></parameter>
+        <parameter name="browser_version" value="latest"></parameter>
+        <classes>
+            <class name="com.nopcommerce.account.Level_36_AWS"></class>
+        </classes>
+    </test>
+
+    <test name="Run on EDGE - Windows">
+        <parameter name="os" value="Windows"></parameter>
+        <parameter name="browser" value="edge"></parameter>
+        <parameter name="browser_version" value="latest"></parameter>
+        <classes>
+            <class name="com.nopcommerce.account.Level_36_AWS"></class>
+        </classes>
+    </test>
+
+</suite>

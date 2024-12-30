@@ -7,6 +7,7 @@
     <groupId>com.automationfc</groupId>
     <artifactId>maven-hybrid-framework</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
     <!-- Khai báo biến - Global Variable -->
     <properties>
@@ -29,6 +30,7 @@
         <extent.version>5.1.0</extent.version>
         <log4j.version>2.19.0</log4j.version>
         <reportng.version>1.1.4</reportng.version>
+<!--        <environment>TEST</environment>-->
     </properties>
 
     <!-- Quản lí thư viện -->
@@ -132,11 +134,44 @@
             <version>${aspectj.version}</version>
             <scope>runtime</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.aeonbits.owner</groupId>
+            <artifactId>owner</artifactId>
+            <version>1.0.12</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.browserstack</groupId>
+            <artifactId>browserstack-java-sdk</artifactId>
+            <version>LATEST</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>aws-sdk-java</artifactId>
+            <version>2.29.43</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
     <!-- Compiler/ Run Test -->
     <build>
         <plugins>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>getClasspathFilenames</id>
+                        <goals>
+                            <goal>properties</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- Compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -147,6 +182,7 @@
                     <source>17</source>
                     <target>17</target>
                 </configuration>
+
             </plugin>
 
             <!-- Run test -->
@@ -157,18 +193,58 @@
                 <configuration>
                     <!-- Run TestNG xml file -->
                     <suiteXmlFiles>
-                        <suiteXmlFile>src/test/resources/RunOrangeHRM.xml</suiteXmlFile>
+<!--                        <suiteXmlFile>src/test/resources/RunEnvironment_01_ServerName.xml</suiteXmlFile>-->
+<!--                        <suiteXmlFile>environmentXML/RunEnvironment_02_Url_${environment}.xml</suiteXmlFile>-->
+<!--                        <suiteXmlFile>environmentXML/RunEnvironment_03_JavaProperties.xml</suiteXmlFile>-->
+                        <suiteXmlFile>environmentXML/RunEnvironment_04_Owner.xml</suiteXmlFile>
                     </suiteXmlFiles>
 
                     <!-- Argument -->
+                    <!--suppress UnresolvedMavenProperty, UnresolvedMavenProperty -->
                     <argLine>
                         -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+                        -javaagent:${com.browserstack:browserstack-java-sdk:jar}
                     </argLine>
                 </configuration>
-
-
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>STAGING</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.1.2</version>
+                        <configuration>
+                            <suiteXmlFiles>
+                                <suiteXmlFile>environmentXML/RunEnvironment_02_Url_STAGING.xml</suiteXmlFile>
+                            </suiteXmlFiles>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>TEST</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.1.2</version>
+                        <configuration>
+                            <suiteXmlFiles>
+                                <suiteXmlFile>environmentXML/RunEnvironment_02_Url_TEST.xml</suiteXmlFile>
+                            </suiteXmlFiles>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

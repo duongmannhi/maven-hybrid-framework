@@ -2,6 +2,7 @@ package commons;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
@@ -11,19 +12,26 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeDriverService;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.*;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.safari.SafariOptions;
 import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.annotations.BeforeSuite;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
+
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.devicefarm.DeviceFarmClient;
+import software.amazon.awssdk.services.devicefarm.model.CreateTestGridUrlRequest;
+import software.amazon.awssdk.services.devicefarm.model.CreateTestGridUrlResponse;
 
 public class BaseTest {
     protected final Logger log;
@@ -86,6 +94,84 @@ public class BaseTest {
 
         driver.get(url);
 
+        return driver;
+    }
+
+    protected WebDriver getBrowserEnvironment(String browserName, String serverName) {
+        BrowserList browser = BrowserList.valueOf(browserName.toUpperCase());
+
+        switch (browser) {
+            case FIREFOX:
+                driver = new FirefoxDriver();
+                break;
+
+            case CHROME:
+                driver = new ChromeDriver();
+                break;
+
+            case EDGE:
+                driver = new EdgeDriver();
+                break;
+
+            default:
+                throw new RuntimeException("Browser is invalid.");
+        }
+
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(GlobalConstants.LONG_TIMEOUT));
+
+        System.out.println("Server Name: " + serverName);
+        System.out.println("Server Url: " + getUrlByServerName(serverName));
+
+        driver.get(getUrlByServerName(serverName));
+
+        return driver;
+    }
+
+    private String getUrlByServerName(String serverName) {
+        ServerList server = ServerList.valueOf(serverName.toUpperCase());
+
+        switch (server) {
+            case DEV:
+                serverName = "https://opensource-demo.orangehrmdev.com/";
+                break;
+
+            case TEST:
+                serverName = "https://opensource-demo.orangehrmtest.com/";
+                break;
+
+            case STAGING:
+                serverName = "https://opensource-demo.orangehrmstaging.com/";
+                break;
+
+            case LIVE:
+                serverName = "https://opensource-demo.orangehrmlive.com/";
+                break;
+
+            default:
+                new IllegalArgumentException("Unexpected value:" + serverName);
+        }
+
+        return serverName;
+    }
+
+    protected WebDriver getBrowserDriverV2(String browserName, String url) {
+        BrowserList browser = BrowserList.valueOf(browserName.toUpperCase());
+        switch (browser) {
+            case FIREFOX:
+                driver = new FirefoxDriver();
+                break;
+            case CHROME:
+                driver = new ChromeDriver();
+                break;
+            case EDGE:
+                driver = new EdgeDriver();
+                break;
+            default:
+                throw new RuntimeException("Browser is invalid.");
+        }
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(GlobalConstants.LONG_TIMEOUT));
         return driver;
     }
 
@@ -290,6 +376,55 @@ public class BaseTest {
 
         driver.get(url);
 
+        return driver;
+    }
+
+    // AWS Device Farm
+    protected WebDriver getBrowserDriverAWSDeviceFarm(String url, String osName, String browserName, String browserVersion) {
+        MutableCapabilities capability = null;
+
+        switch (browserName) {
+            case "firefox":
+                FirefoxOptions fOptions = new FirefoxOptions();
+                fOptions.setPlatformName(osName.toLowerCase());
+                fOptions.setBrowserVersion(browserVersion);
+                capability = fOptions;
+                break;
+            case "chrome":
+                ChromeOptions cOptions = new ChromeOptions();
+                cOptions.setPlatformName(osName.toLowerCase());
+                cOptions.setBrowserVersion(browserVersion);
+                capability = cOptions;
+                break;
+            case "edge":
+                EdgeOptions eOptions = new EdgeOptions();
+                eOptions.setPlatformName(osName.toLowerCase());
+                eOptions.setBrowserVersion(browserVersion);
+                eOptions.setCapability("ms:edgeChromium","true");
+                capability = eOptions;
+                break;
+            default:
+                throw new RuntimeException("Browser is not valid!");
+        }
+
+        DeviceFarmClient client = DeviceFarmClient.builder().region(Region.US_WEST_2).build();
+
+        CreateTestGridUrlRequest request = CreateTestGridUrlRequest.builder().expiresInSeconds(300) // 5 minutes
+                .projectArn("arn:aws:devicefarm:us-west-2:535002864733:testgrid-project:1a4371c8-7bab-4a19-9c8d-8ff48e79ea5d").build();
+
+        URL testGridUrl = null;
+        try {
+            CreateTestGridUrlResponse response = client.createTestGridUrl(request);
+            testGridUrl = new URL(response.url());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        driver = new RemoteWebDriver(testGridUrl, capability);
+
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(GlobalConstants.LONG_TIMEOUT));
+        driver.manage().window().maximize();
+        driver.get(url);
         return driver;
     }
 

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite parallel="none" name="OrangeHRM - Web Automation UI">
+
+    <listeners>
+        <listener class-name="commons.MethodListener"/>
+    </listeners>
+
+    <parameter name="server" value="live"></parameter>
+
+    <test name="Run on Chrome" preserve-order="true">
+        <parameter name="browser" value="chrome"></parameter>
+        <classes>
+            <class name="com.nopcommerce.account.Level_32_BrowserStack"></class>
+        </classes>
+    </test>
+
+
+</suite>

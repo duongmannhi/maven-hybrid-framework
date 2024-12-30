@@ -24,4 +24,5 @@ public class GlobalConstants {
     public static final String BROWSER_EXTENSION = RELATIVE_PROJECT_PATH + File.separator + "browserExtension" + File.separator;
     public static final String BROWSER_LOG = RELATIVE_PROJECT_PATH + File.separator + "browserLogs" + File.separator;
     public static final String REPORTNG_IMAGE_PATH = RELATIVE_PROJECT_PATH + File.separator+ "reportNGImage" + File.separator;
+    public static final String ENVIRONMENT_CONFIG_PATH = RELATIVE_PROJECT_PATH + File.separator + "environmentConfig" + File.separator;
 }
